@@ -21,6 +21,7 @@ def index(request):
     return render(request,'index.html')
 
 def room(request,room):
+    
     return render(request,'room.html')
 
 def checkroom(request):
