@@ -26,7 +26,7 @@ def index(request):
     return render(request,'index.html')
 
 def chatroom(request,pk:int):
-    other_user=get_object_or_404(User,pk=pk)
+    other_user=get_object_or_404(User,pk=2)
     messages=Message.objects.filter(Q(receiver=other_user,sender=request.user)|Q(receiver=request.user,sender=other_user))
     messages.update(seen=True)
     context={
