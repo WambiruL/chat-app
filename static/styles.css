@@ -4,7 +4,7 @@ body {
     padding: 0 20px;
     font-size: 25px;
     font-family: 'Fruktur', cursive;
-    background-image: linear-gradient(purple,plum);
+    background-image: linear-gradient(plum,purple);
   }
   
   .container {
