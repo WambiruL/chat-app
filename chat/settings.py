@@ -55,6 +55,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'chat.urls'
+LOGIN_REDIRECT_URL = 'index'
+
+LOGIN_URL = 'login'
 
 TEMPLATES = [
     {
