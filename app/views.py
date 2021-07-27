@@ -1,6 +1,11 @@
 from django.shortcuts import render,redirect
 from .models import *
 from .forms import *
+from django.contrib.auth.decorators import login_required
+from django.http.response import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.db.models import Q
+import json
 
 
 # Create your views here.
@@ -20,18 +25,13 @@ def registerPage(request):
 def index(request):
     return render(request,'index.html')
 
-def room(request,room):
-    
-    return render(request,'room.html')
-
-def checkroom(request):
-    room=request.POST['room_name']
-    username=request.POST['username']
-
-    if Room.objects.filter(name=room).exists():
-        return redirect('/'+room+'/?username='+username)
-
-    else:
-        new_room=Room.objects.create(name=room)
-        new_room.save()
-        return redirect('/'+room+'/?username='+username)
+def chatroom(request,pk:int):
+    other_user=get_object_or_404(User,pk=pk)
+    messages=Message.objects.filter(Q(receiver=other_user,sender=request.user)|Q(receiver=request.user,sender=other_user))
+    messages.update(seen=True)
+    context={
+        'other_user':other_user,
+        'messages':messages,
+    }
+     
+    return render(request,'room.html',context)

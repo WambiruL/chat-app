@@ -1,18 +1,15 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
 # Create your models here.
-class Room(models.Model):
-    name=models.CharField(max_length=500)
-
-    def __str__(self):
-        return self.name
-
+User=get_user_model()
 
 class Message(models.Model):
-    message=models.CharField(max_length=200000)
-    date = models.DateTimeField(auto_now_add=True)
-    user=models.CharField(max_length=200)
-    room=models.CharField(max_length=300)
-     
-    def __str__(self):
-        return self.message
+    sender=models.ForeignKey(User,related_name='sent_messages',on_delete=models.CASCADE,null=True)
+    receiver=models.ForeignKey(User,related_name='received_messages',on_delete=models.CASCADE,null=True)
+    message=models.TextField()
+    seen=models.BooleanField(default=False)
+    date_created=models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering=['date_created']
