@@ -10,5 +10,6 @@ urlpatterns=[
     url(r'1/',views.chatroom,name='chatroom'),
     url(r'2/',views.chatroom,name='chatroom'),
     url(r'ajax/2',views.ajax_load_messages,name='chatroom=ajax'),
-    url(r'ajax/1',views.ajax_load_messages,name='chatroom=ajax')
+    url(r'ajax/1',views.ajax_load_messages,name='chatroom=ajax'),
+    url(r'profile/',views.profileView,name='profile'),
 ]
