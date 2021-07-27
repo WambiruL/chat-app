@@ -35,3 +35,22 @@ def chatroom(request,pk:int):
     }
      
     return render(request,'room.html',context)
+
+def ajax_load_messages(request,pk):
+    other_user=get_object_or_404(User,pk=pk)
+    messages=Message.objects.filter(seen=False)
+    messages.update(seen=True)
+    message_list=[{
+        'sender':message.sender.username,
+        'message':message.message,
+        'sent':message.sender==request.user
+    }for message in messages]
+    if request.method=='POST':
+        message=json.loads(request.body)
+        m=Message.objects.create(receiver=other_user,sender=request.user)
+        message_list.append({
+            'sender':request.user.username,
+            'message':m.message,
+            'sent':True
+        })
+    return JsonResponse(message_list,safe=False)
