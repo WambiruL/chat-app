@@ -12,7 +12,7 @@
     <div class="messages-area">
         {%for message in messages%}
 
-        <div class="message {%if meesage.sender==request.user%}right {%else%} left{%endif%}">
+        <div class="message">
             <div class="sent_by">
                 {{message.sender.username}}
             </div>
@@ -28,5 +28,67 @@
     </div>
 
 </body>
-{%endblock}
+{%endblock%}
+<script>
+    let message_send_btn = document.getElementById("send-btn");
+    let message_input = document.getElementById("message-input");
+    function send_message() {
+        let message = message_input.value;
+        if (message === "") {
+            return;
+        }
+        message_input.value = "";
+        fetch("{% url 'chatroom-ajax' other_user.id %}",
+            {
+                method: "POST",
+                credentials: 'same-origin',
+                headers: {
+                    "Content-Type": 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify(message)
+            }
+        ).then(e => e.json()).then(messages => {
+            for (message of messages) {
+                construct_message(message);
+            }
+        });
+    }
+
+    function load_messages() {
+        fetch("{% url 'chatroom-ajax' other_user.id %}")
+            .then(e => e.json())
+            .then(messages => {
+                console.log(messages)
+                for (message of messages) {
+                    construct_message(message);
+                }
+            })
+    }
+
+    function construct_message(message){
+        let messages_container = document.querySelector(".messages-area");
+        let class_name = "left"
+        if (message.sent){
+            class_name = "right"
+        }
+        let div = document.createElement("div");
+        div.classList.add("message", class_name);
+        div.innerHTML = `
+        <div class="sent-by">${ message.sender }</div>
+            <div class="content">${ message.message }</div>
+        `
+        messages_container.appendChild(div);
+        div.scrollIntoView()
+    }
+    message_send_btn.addEventListener('click', send_message);
+    setInterval(load_messages, 2000);
+</script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
 

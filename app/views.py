@@ -25,8 +25,19 @@ def registerPage(request):
 def index(request):
     return render(request,'index.html')
 
-def chatroom(request,pk:int):
-    other_user=get_object_or_404(User,pk=2)
+def chatroom(request,pk=1):
+    other_user=get_object_or_404(User,pk=pk)
+    messages=Message.objects.filter(Q(receiver=other_user,sender=request.user)|Q(receiver=request.user,sender=other_user))
+    messages.update(seen=True)
+    context={
+        'other_user':other_user,
+        'messages':messages,
+    }
+     
+    return render(request,'room.html',context)
+
+def chatroom(request,pk=2):
+    other_user=get_object_or_404(User,pk=pk)
     messages=Message.objects.filter(Q(receiver=other_user,sender=request.user)|Q(receiver=request.user,sender=other_user))
     messages.update(seen=True)
     context={
