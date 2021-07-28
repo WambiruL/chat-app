@@ -13,13 +13,12 @@
 {%endblock%}
 {%block content%}
 <body style="background-color: #1A2226;">
-<div class="container">
+
 <div class="section" style="text-align: center; background-color: white; position: relative; top: 150px; border-radius: 50px;">
     <br>
     <h2 class="account-heading">{{user}}</h2>
     <img class="rounded-circle account-img" style="width: 150px; height: 100px;" src="{{user.profile_image.url}}">
     <p>BIO:{{user.bio}}</p>
-    <p>NEIGHBOURHOOD:{{user.neighbourhood.name}}</p>
     <p class="text-secondary">EMAIL:{{user.email}}</p>
 
     <a class="btn btn-sm btn-outline-secondary mr-3" data-toggle="modal" data-target="#edit"><strong>Edit Profile</strong></a>
@@ -47,7 +46,7 @@
 
    
 </div>
-</div>
+
 
 <!---modal class-->
 

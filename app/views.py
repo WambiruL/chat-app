@@ -25,7 +25,7 @@ def registerPage(request):
 def index(request):
     return render(request,'index.html')
 
-def chatroom(request,pk=1):
+def chatroom(request,pk=6):
     other_user=get_object_or_404(User,pk=pk)
     messages=Message.objects.filter(Q(receiver=other_user,sender=request.user)|Q(receiver=request.user,sender=other_user))
     messages.update(seen=True)
@@ -62,7 +62,7 @@ def profileView(request):
     return render(request,'profile.html',ctx)
 
 
-def chatroom(request,pk=2):
+def chatroom(request,pk=7):
     other_user=get_object_or_404(User,pk=pk)
     messages=Message.objects.filter(Q(receiver=other_user,sender=request.user)|Q(receiver=request.user,sender=other_user))
     messages.update(seen=True)

@@ -9,22 +9,12 @@ from django.contrib.auth.models import User
 # Create your models here.
 User=get_user_model()
 
-class Message(models.Model):
-    sender=models.ForeignKey(User,related_name='sent_messages',on_delete=models.CASCADE,null=True)
-    receiver=models.ForeignKey(User,related_name='received_messages',on_delete=models.CASCADE,null=True)
-    message=models.TextField()
-    seen=models.BooleanField(default=False)
-    date_created=models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering=['date_created']
 
 class Profile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
     profile_image=models.ImageField(default='default.jpeg', upload_to='Profilepics/')
     bio=models.CharField(max_length=1000,null=True, default="My Bio")
     email=models.EmailField(max_length=200,null=True)
-    message=models.ForeignKey(Message,related_name='message',on_delete=DO_NOTHING,null=True)
 
     def __str__(self):
         return f'{self.user} Profile'
@@ -38,3 +28,14 @@ class Profile(models.Model):
     def save_user_profile(sender,instance,**kwargs):
         print("signal activated---->>>", dir(instance))
         instance.profile.save
+
+
+class Message(models.Model):
+    sender=models.ForeignKey(User,related_name='sent_messages',on_delete=models.CASCADE,null=True)
+    receiver=models.ForeignKey(User,related_name='received_messages',on_delete=models.CASCADE,null=True)
+    message=models.TextField()
+    seen=models.BooleanField(default=False)
+    date_created=models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering=['date_created']
