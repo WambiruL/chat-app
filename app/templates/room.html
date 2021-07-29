@@ -9,77 +9,90 @@
 <script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="header">{{other_user.username}}</div>
+    <div class="header">{{room.name}}</h2></div>
     <div class="messages-area">
         {%for message in messages%}
 
         <div class="message">
                 <p style="color: red;">{{message.sender.username}}</p>
                 <p style="color: black;">{{message.message}}</p>
+                <p style="position: relative; left: 500px; bottom: 40px;">{{message.date_created|date:"F d,Y"}}</p>
         </div>
         {%endfor%}
     </div>
-    <div class="input-area">
-        <input type="text" id="message-input">
-        <button id="send-btn">Send</button>
-    </div>
+    <form id="post-form">
+        {% csrf_token %}
+        <div class="input-area">
+            <input type="text" id="message-input" name="message">
+            <button type="submit" id="send-btn" value="Send">Send</button>
+        </div>
+    </form>
 
 </body>
 {%endblock%}
 <script>
-    let message_send_btn = document.getElementById("send-btn");
-    let message_input = document.getElementById("message-input");
-    function send_message() {
-        let message = message_input.value;
-        if (message === "") {
-            return;
-        }
-        message_input.value = "";
-        fetch("{% url 'chatroom-ajax' other_user.id %}",
-            {
-                method: "POST",
-                credentials: 'same-origin',
-                headers: {
-                    "Content-Type": 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify(message)
-            }
-        ).then(e => e.json()).then(messages => {
-            for (message of messages) {
-                construct_message(message);
+    $(document).ready(function(){
+    
+    setInterval(function(){
+        $.ajax({
+            type: 'GET',
+            url : "/getMessages/{{room}}/",
+            success: function(response){
+                console.log(response);
+                $("#display").empty();
+                for (var key in response.messages)
+                {
+                    var temp="<div class='container darker'><b>"+response.messages[key].user+"</b><p>"+response.messages[key].value+"</p><span class='time-left'>"+response.messages[key].date+"</span></div>";
+                    $("#display").append(temp);
+                }
+            },
+            error: function(response){
+                alert('An error occured')
             }
         });
-    }
+    },1000);
+    })
+    </script>
+    
+    
+    <script type="text/javascript">
+      $(document).on('submit','#post-form',function(e){
+        e.preventDefault();
+    
+        $.ajax({
+          type:'POST',
+          url:'/send',
+          data:{
+              username:$('#username').val(),
+              room_id:$('#room_id').val(),
+              message:$('#message').val(),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(data){
+             //alert(data)
+          }
+        });
+        document.getElementById('message').value = ''
+      });
+    </script>
+    
+<script
+  src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+  integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+  integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+  crossorig
 
-    function load_messages() {
-        fetch("{% url 'chatroom-ajax' other_user.id %}")
-            .then(e => e.json())
-            .then(messages => {
-                console.log(messages)
-                for (message of messages) {
-                    construct_message(message);
-                }
-            })
-    }
+  
 
-    function construct_message(message){
-        let messages_container = document.querySelector(".messages-area");
-        let class_name = "left"
-        if (message.sent){
-            class_name = "right"
-        }
-        let div = document.createElement("div");
-        div.classList.add("message", class_name);
-        div.innerHTML = `
-        <div class="sent-by">${ message.sender }</div>
-            <div class="content">${ message.message }</div>
-        `
-        messages_container.appendChild(div);
-        div.scrollIntoView()
-    }
-    message_send_btn.addEventListener('click', send_message);
-    setInterval(load_messages, 2000);
-</script>
+  
 
 

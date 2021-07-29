@@ -20,3 +20,12 @@ class ProfleUpdateForm(forms.ModelForm):
     class Meta:
         model=Profile
         fields=['profile_image', 'bio']
+
+class messageForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['message'].widget = forms.TextInput()
+
+    class Meta:
+        model = Message
+        fields = ('message',)

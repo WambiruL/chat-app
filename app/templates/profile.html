@@ -17,6 +17,7 @@
 <div class="section" style="text-align: center; background-color: white; position: relative; top: 150px; border-radius: 50px;">
     <br>
     <h2 class="account-heading">{{user}}</h2>
+    <h2>{{room}}</h2>
     <img class="rounded-circle account-img" style="width: 150px; height: 100px;" src="{{user.profile_image.url}}">
     <p>BIO:{{user.bio}}</p>
     <p class="text-secondary">EMAIL:{{user.email}}</p>
@@ -26,7 +27,7 @@
     <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md ">
             <div class="modal-content">
-                <form action="" method="post" enctype="multipart/form-data" style="text-align: center; color: red;">
+                <form action="" method="post" enctype="multipart/form-data" style="text-align: center; color: red; background-color: plum;">
                     {% csrf_token%}
                     {{ u_form|crispy}}
                     <br>
